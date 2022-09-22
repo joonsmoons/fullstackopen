@@ -1,87 +1,62 @@
 import { useState } from 'react'
 
-const Header = ({title}) => <h1>{title}</h1>
-const StatisticLine = ({scores}) => {
-  return (
-    <tr>
-      <td>{scores.name}</td>
-      <td>{scores.score}</td>
-    </tr>
-  )
-
-}
-const Button = ({handleClick, text}) => <button onClick={handleClick}>{text}</button>
-const Statistics = ({scoreboard}) => {
-  if (scoreboard.total.score > 0) {
-    return (
-      <table>
-        <tbody>
-          <StatisticLine scores={scoreboard.good}/>
-          <StatisticLine scores={scoreboard.neutral}/>
-          <StatisticLine scores={scoreboard.bad}/>
-          <StatisticLine scores={scoreboard.total}/>
-          <StatisticLine scores={scoreboard.average}/>
-          <StatisticLine scores={scoreboard.positive}/>
-        </tbody>
-      </table>
-    )
-  } else {
-    return <p>No feedback given</p>
-  }
-}
-
 const App = () => {
-  // save clicks of each button to its own state
-  const [good, setGood] = useState(0)
-  const [neutral, setNeutral] = useState(0)
-  const [bad, setBad] = useState(0)
-  const total = good + neutral + bad
+  const anecdotes = [
+    'If it hurts, do it more often.',
+    'Adding manpower to a late software project makes it later!',
+    'The first 90 percent of the code accounts for the first 10 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
+    'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
+    'Premature optimization is the root of all evil.',
+    'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
+    'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.'
+  ]
+  const [selected, setSelected] = useState(0)
+  const [points, setPoints] = useState({
+    0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0
+  })
+  const [max, setMax] = useState({
+    index: 0, 
+    votes: 0
+  })
 
-  const scoreboard = {
-    good: {
-      name: 'good', 
-      score: good
-      }, 
-    neutral: {
-      name: 'neutral', 
-      score: neutral
-    }, 
-    bad: {
-      name: 'bad', 
-      score: bad
-    }, 
-    total: {
-      name: 'total', 
-      score: total
-    },
-    average: {
-      name: 'average', 
-      score: Math.round((good*1 + neutral*0 + bad*-1)*100/total, 2) / 100
-    }, 
-    positive: {
-      name: 'positive', 
-      score: Math.round((good /total)*10000, 2) / 100 + '%'
-    }
+  const randomAnecdote = () => {
+    let index = Math.floor(Math.random() * 7)
+    return setSelected(index)
   }
 
-  const clickDirection = (text) => () => {
-    if (text == "good") {
-      return setGood(good+1)
-    } else if (text == "neutral") {
-      return setNeutral(neutral+1)
-    } else if (text == "bad") {
-      return setBad(bad+1)
+  const vote = () => {
+    const newPoints = {
+      ...points
     }
+    const newMax = {
+      ...max
+    }
+    newPoints[selected] = newPoints[selected] + 1
+    if (newPoints[selected] >= newMax.votes) {
+      newMax.votes = newPoints[selected]
+      newMax.index = selected
+    }
+    console.log(newMax)
+    setMax(newMax)
+    setPoints(newPoints)
   }
 
   return (
     <div>
-      <Header title={'give feedback'}/>
-      <Button handleClick={clickDirection('good')} text='good'/>
-      <Button handleClick={clickDirection('neutral')} text='neutral'/>
-      <Button handleClick={clickDirection('bad')} text='bad'/>
-      <Header title={'statistics'}/>
-      <Statistics scoreboard={scoreboard}/>
+      <h1>Anecdote of the day</h1>
+      <p>
+        {anecdotes[selected]}
+        <br />
+        has {points[selected]} votes
+      </p>
+      <button onClick={vote}>vote</button>
+      <button onClick={randomAnecdote}>next anecdote</button>
+      <h1>Anecdote with most votes</h1>
+      <p>
+        {anecdotes[max.index]}
+        <br />
+        has {points[max.index]} votes
+      </p>
     </div>
   )
 }
