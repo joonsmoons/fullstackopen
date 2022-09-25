@@ -18,7 +18,7 @@ const App = () => {
     index: 0, 
     votes: 0
   })
-
+  
   const randomAnecdote = () => {
     let index = Math.floor(Math.random() * 7)
     return setSelected(index)
