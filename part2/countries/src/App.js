@@ -10,9 +10,7 @@ function App() {
   useEffect(() => {
     axios
       .get('https://restcountries.com/v3.1/all')
-      .then(response => {
-        setCountries(response.data)
-      })
+      .then(response => setCountries(response.data))
   }, [])
 
   const handleFilter = (event) => {
@@ -22,7 +20,7 @@ function App() {
 
   const chooseCountry = (country) => (event) => {
     event.preventDefault()
-    console.log('show info', country)
+    // console.log('show info', country)
     setInfo(country)
   }
 
@@ -55,11 +53,19 @@ function App() {
     }
   }
 
+  const showInfo = () => {
+    if (Object.keys(info).length > 0) {
+      return <CountryInfo country={info} />
+    } else {
+      return <></>
+    }
+  }
+
   return (
     <div className="App">
       <div>find countries <input value={filter} onChange={handleFilter} /></div>
       {showFilter()}
-      <CountryInfo country={info} />
+      {showInfo()}
     </div>
   )
 }
